@@ -3,7 +3,9 @@
     "type": "project",
     "license": "GPL",
     "minimum-stability": "dev",
-    "require": {},
+    "require": {
+        "darkaonline/ripcord": "dev-master"
+    },
     "autoload": {
         "psr-4":{"Inc\\":"./inc"}
     }

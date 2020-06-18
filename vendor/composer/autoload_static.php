@@ -7,6 +7,10 @@ namespace Composer\Autoload;
 class ComposerStaticInitbf39899f45f9d9a8d6f936dfef66d0df
 {
     public static $prefixLengthsPsr4 = array (
+        'R' => 
+        array (
+            'Ripcord\\' => 8,
+        ),
         'I' => 
         array (
             'Inc\\' => 4,
@@ -14,6 +18,10 @@ class ComposerStaticInitbf39899f45f9d9a8d6f936dfef66d0df
     );
 
     public static $prefixDirsPsr4 = array (
+        'Ripcord\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/darkaonline/ripcord/src/Ripcord',
+        ),
         'Inc\\' => 
         array (
             0 => __DIR__ . '/../..' . '/inc',
