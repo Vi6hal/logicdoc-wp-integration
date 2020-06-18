@@ -3,7 +3,7 @@
  * @package ld-connector
  *
  */
-namespace Inc\wpusers;
+namespace Inc\usercontroller;
 class datacontroller
 {
 
@@ -26,7 +26,8 @@ class datacontroller
         $user['username']=$profile_data->user_login??'Client'.$profile_data->ID;
         $user['firstName'] =$profile_data->user_nicename??'Client'.$profile_data->ID;
         $user['name'] =$profile_data->user_nicename??'Client'.$profile_data->ID;
-        //TODO need to be filtered based on role 
+
+        // passing just the role[0] as the primanry role (please refer line 63 get_human_rolename)
         $user['groupIds'] = $roles[0];      
 
         // login creds
@@ -49,10 +50,9 @@ class datacontroller
 
     static function update_ld_user_details($user_id,$temp_usr)
     {
-        $user_details['logicdoc_username']=$temp_usr['username'];
-        $user_details['logicdoc_pass']=$temp_usr['password'];
-        $user_details['logicdoc_user_id']=$temp_usr['logicdoc_user_id'];
-        $user_details['logicdoc_rf']=4;
+        $user_details['logicaldoc_username']=$temp_usr['username'];
+        $user_details['logicaldoc_pass']=$temp_usr['password'];
+        $user_details['logicaldoc_user_id']=$temp_usr['logicdoc_user_id'];
         global $wp;
         foreach($user_details as $key=>$val)
         {
@@ -66,6 +66,9 @@ class datacontroller
         {
             case'zpm_client':
                 return 'Client';
+                break;
+            case'zpm_user':
+                return 'Associate';
                 break;
             case'zpm_frontend_user':
                 return 'Associate';

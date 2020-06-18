@@ -6,24 +6,20 @@
 namespace Inc;
 
 use Inc\logicaldocwdsl\ldapi;
-use Inc\wpusers\linkcontact;
+use Inc\usercontroller\registersettings;
+use Inc\erpcontroller\clientcontroller;
 class ldinit
 {
     public $ldoc;
     private static $instance = NULL;
     public function __construct()
     {
-        linkcontact::create_self();
+        registersettings::create_self();
         add_action( 'user_register',array($this,'new_user_eventlistner'));
         // add_action( 'zpm_project_create',array($this,'project_create_eventlistner'));
         // add_action( 'zpm_project_update',array($this,'project_update_eventlistner'));
         // add_action( 'user_register',array($this,'new_user_eventlistner'));
         // add_action( 'deleted_user',array($this,'new_user_eventlistner'));
-        $data_dump=get_userdata(18);
-        $profile_data=$data_dump->data;
-        $roles=$data_dump->roles;
-        echo"<pre>";print_r($data_dump);echo"</pre>";die;
-
     }
     public function new_user_eventlistner($user_id)
     {

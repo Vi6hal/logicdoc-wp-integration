@@ -5,24 +5,23 @@
  */
 namespace Inc\logicaldocwdsl;
 use SoapClient;
-use Inc\wpusers\datacontroller;
-
+use Inc\usercontroller\datacontroller;
 
 class ldapi
 {
     public static $logfile = 'apilog.txt';
     private static $instance = null;
     private $session_var=null;
-    public $ldoc_user=null;
-    public $ldoc_pass=null;
-    public $ldoc_url=null;
-    public $authClient=null;
-    public $securityClient=null;
+    private $ldoc_user=null;
+    private $ldoc_pass=null;
+    private $ldoc_url=null;
+    private $authClient=null;
+    private $securityClient=null;
     private function __construct()
     {
-        $this->ldoc_user ='admin';
-        $this->ldoc_pass ='T7IJGXsghnK';
-        $this->ldoc_url= 'http://startupdms.kennovation-services.com:8080';
+        $this->ldoc_user =get_option('dms_master');
+        $this->ldoc_pass =get_option('dms_slave');
+        $this->ldoc_url =get_option('dms_url');
         $this->authClient = new SoapClient($this->ldoc_url . '/services/Auth?wsdl');
         $this->securityClient = new SoapClient($this->ldoc_url . '/services/Security?wsdl');
         $this->set_session();
