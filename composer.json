@@ -1,0 +1,10 @@
+{
+    "name": "noah/cf7-scrm",
+    "type": "project",
+    "license": "GPL",
+    "minimum-stability": "dev",
+    "require": {},
+    "autoload": {
+        "psr-4":{"Inc\\":"./inc"}
+    }
+}
