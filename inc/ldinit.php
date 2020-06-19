@@ -7,6 +7,7 @@ namespace Inc;
 
 use Inc\logicaldocwdsl\ldapi;
 use Inc\usercontroller\registersettings;
+use Inc\usercontroller\foldercontroller;
 use Inc\erpcontroller\clientcontroller;
 
 class ldinit
@@ -19,8 +20,9 @@ class ldinit
     {
         $this->usersettings=registersettings::create_self();
         $this->ldoc=ldapi::create_self();
+
         // new user register
-        add_action( 'user_new_form', array($this,'register_settings'),8);
+        // add_action( 'user_new_form', array($this,'register_settings'),8);
         
         //trigger dms creation on completion of  new user registeration process
         add_action( 'user_register',array($this,'new_user_eventlistner'));
@@ -32,12 +34,16 @@ class ldinit
         // add_action( 'user_register',array($this,'new_user_eventlistner'));
         // add_action( 'deleted_user',array($this,'new_user_eventlistner'));
     }
-    public function new_user_eventlistner($user_id)
+    // public function register_settings($user_obj)
+    // {
+    // }
+    public function new_user_eventlistner($user_obj)
     {
-        $this->ldoc::file_loggerr($user_id);
-        $this->ldoc->ldc_new_user($user_id);
+        $this->ldoc::file_loggerr($user_obj);
+        $this->ldoc->ldc_new_user($user_obj);
+        foldercontroller::setup_permission($user_obj,$this->ldoc);
+        $this->ldoc->destroy_session();
         ldapi::file_loggerr("triggered logicaldoc new user function");
-        $this->folder_opr();
     }
     
     public function project_create_eventlistner($data)

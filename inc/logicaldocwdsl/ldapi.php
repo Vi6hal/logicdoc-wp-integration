@@ -42,7 +42,7 @@ class ldapi
             ldapi::file_loggerr($e);
         }
     } 
-    private function destroy_session()
+    public function destroy_session()
     {
         $logoutParams = array ('sid' => $this->session_var );
         try {
@@ -79,7 +79,7 @@ class ldapi
     {
         // acc_flag '0'= revoke '1' = grant
         try {
-            $userParams = array
+            $params = array
             (
                 'sid' => $this->session_var,
                 'folderId'=>$folder_id,
@@ -87,7 +87,7 @@ class ldapi
                 'permissions'=>$acc_flag,
                 'recursive'=>$recursive,
             );
-            $result = $this->folderClient->storeUser($userParams);
+            $result = $this->folderClient->grantUser($params);
             return $result??FALSE;
             }
         catch(exception $e)

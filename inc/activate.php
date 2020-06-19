@@ -12,7 +12,8 @@ class activate
     {
         global $wp;
         // update_option( string $option, mixed $value, string|bool $autoload = null )
-        update_option('dms_url','http://startupdms.kennovation-services.com:8080',false);
+        // update_option('dms_url','http://startupdms.kennovation-services.com:8080',false);
+        update_option('dms_url','http://tata.kennovation-services.com:8880',false);
         update_option('dms_master','admin',false);
         update_option('dms_slave','T7IJGXsghnK',false);
 

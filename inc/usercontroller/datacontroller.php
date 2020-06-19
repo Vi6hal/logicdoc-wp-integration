@@ -31,7 +31,7 @@ class datacontroller
         $user['groupIds'] = $roles[0];      
 
         // login creds
-        $user['userName'] = $profile_data->user_login??'Client'.$profile_data->ID;
+        $user['userName'] = $profile_data->user_login.''.rand(100,999)??'Client'.$profile_data->ID;
         $user['password'] = datacontroller::makepassword(); // default 8 chars min passwd length 
 
         //end here 
@@ -89,9 +89,5 @@ class datacontroller
                 return 'guest';
                 break;           
         }
-    }
-    static function get_needed_folders()
-    {
-        
     }
 }
