@@ -9,7 +9,7 @@ use Inc\usercontroller\datacontroller;
 
 class ldapi
 {
-    public static $logfile = 'apilog.txt';
+    public static $logfile = NULL;
     private static $instance = null;
     private $session_var=null;
     private $ldoc_user=null;
@@ -17,6 +17,8 @@ class ldapi
     private $ldoc_url=null;
     private $authClient=null;
     private $securityClient=null;
+    private $folderClient=null;
+
     private function __construct()
     {
         $this->ldoc_user =get_option('dms_master');
@@ -24,6 +26,7 @@ class ldapi
         $this->ldoc_url =get_option('dms_url');
         $this->authClient = new SoapClient($this->ldoc_url . '/services/Auth?wsdl');
         $this->securityClient = new SoapClient($this->ldoc_url . '/services/Security?wsdl');
+        $this->folderClient=new SoapClient($this->ldoc_url . '/services/Folder?wsdl');
         $this->set_session();
     }
 
@@ -33,11 +36,10 @@ class ldapi
             $loginParams = array('username' => $this->ldoc_user, 'password' => $this->ldoc_pass);
             $result = $this->authClient->login($loginParams);
             $this->session_var = $result->return;
-            ldapi::file_loggerr('session set:'.$result->return??'undefined');
         }
         catch(SoapFault $e)
         {
-            self::$instance->file_loggerr($e);
+            ldapi::file_loggerr($e);
         }
     } 
     private function destroy_session()
@@ -48,7 +50,7 @@ class ldapi
         }
         catch(SoapFault $e)
         {
-            self::$instance->file_loggerr($e);
+            ldapi::file_loggerr($e);
         }
         
     }
@@ -59,24 +61,54 @@ class ldapi
             $temp_usr=datacontroller::ld_set_user_data($user_id);
             if ($temp_usr && $this->session_var) 
             {
-                self::$instance->file_loggerr("ld user created against user:".print_r($temp_usr['groupIds']));
                 $temp_usr['groupIds']=$this->set_ld_user_group($user_id,$temp_usr['groupIds']);
-                $userParams = array('sid' => $this->session_var, 'user' => $temp_usr);
-                $result = $this->securityClient->storeUser($userParams);
-                self::$instance->file_loggerr("ld user created against user:".$user_id);
+                $result=$this->ldc_register_user($temp_usr);
+                ldapi::file_loggerr("new usercreation triggerd for logicaldoc");
                 $temp_usr['logicdoc_user_id']=$result->userId;                
                 datacontroller::update_ld_user_details($user_id,$temp_usr);
-                $this->destroy_session();
+                ldapi::file_loggerr("updated data to db");
+
             }
         }
         catch(exception $e)
         {
-            self::$instance->file_loggerr($e);
+            ldapi::file_loggerr($e);
+        }
+    }
+    public function folder_access_controller($folder_id,$user_id,$acc_flag=0,$recursive=false)
+    {
+        // acc_flag '0'= revoke '1' = grant
+        try {
+            $userParams = array
+            (
+                'sid' => $this->session_var,
+                'folderId'=>$folder_id,
+                'userId' => $user_id,
+                'permissions'=>$acc_flag,
+                'recursive'=>$recursive,
+            );
+            $result = $this->folderClient->storeUser($userParams);
+            return $result??FALSE;
+            }
+        catch(exception $e)
+        {
+            ldapi::file_loggerr($e);
+        }
+    }
+    public function ldc_register_user($user_data)
+    {
+        try {
+                $userParams = array('sid' => $this->session_var, 'user' => $user_data);
+                $result = $this->securityClient->storeUser($userParams);
+                return $result??FALSE;
+            }
+        catch(SoapFault $e)
+        {
+            ldapi::file_loggerr($e);
         }
     }
     public static function create_self()
     {
-        self::$logfile=dirname(__FILE__, 3).'/'.ldapi::$logfile;
         if (is_null(self::$instance)) {
             self::$instance = new self;
         }
@@ -84,7 +116,8 @@ class ldapi
     }
     public static function file_loggerr($log_data)
     {
-        // self::$instance->file_loggerr("calling create self");
+        self::$logfile=dirname(__FILE__, 3).'/'.'apilog.txt';
+
         if(!file_exists(self::$logfile))
         {
             $fp=fopen(self::$logfile, "w");
@@ -104,7 +137,7 @@ class ldapi
         {
             if($group->name==$human_role) 
             {
-                self::$instance->file_loggerr($group->name);
+                ldapi::file_loggerr($group->name);
                 return [$group->id];
             }
         }

@@ -18,7 +18,7 @@ class activate
 
         update_option('erp_url','http://startuperp.kennovation-services.com:8069',false);
         update_option('erp_db','TEST_2020',false);
-        update_option('erp_master','admin',false);
+        update_option('erp_master','Admin',false);
         update_option('erp_slave','Kanj@Admin!2020',false);
     }
 }

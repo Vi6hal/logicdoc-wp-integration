@@ -5,6 +5,7 @@
  */
 namespace Inc\usercontroller;
 use Inc\erpcontroller\clientcontroller;
+use Inc\logicaldocwdsl\ldapi;
 class registersettings
 {
     private $erpclient=NULL;
@@ -12,14 +13,16 @@ class registersettings
     private function __construct()
     {
         $this->erpclient=clientcontroller::create_self();
-        add_action( 'user_new_form', array($this,'list_erp_customers'));
+        add_action( 'user_new_form', array($this,'list_erp_customers'),10);
         add_action( 'user_register', array($this,'save_erp_connect'),9);
-
+        ldapi::file_loggerr("added save_erp_connect to user_register hook");
         add_action( 'edit_user_profile', array($this,'edit_connected_client'));    
-        add_action( 'edit_user_profile_update', array($this,'save_erp_connect') );
+        // add_action( 'edit_user_profile_update', array($this,'save_erp_connect') );
     }
     function list_erp_customers( $user )
-    { ?>
+    { 
+        ldapi::file_loggerr("New User Form Loaded");
+        ?>
         <table class="form-table">
             <tr>
                 <th><label for="dropdown">Linked Contact</label></th>
@@ -41,39 +44,45 @@ class registersettings
 
 function edit_connected_client($user)
 { 
-    if($user->roles[0]!='zpm_client')
+    if($user->roles[0]!='zpm_client' && $user->roles[0]!='subscriber')
     {
         return;
     }
+    echo "CKSLD";
     ?>
     <table class="form-table">
         <tr>
             <th><label for="dropdown">Linked Contact</label></th>
             <td>
-              <select name="ld_erp_linked_client" id="client">
+              <select name="ld_erp_linked_client" id="client" disabled>
                 <?php
+
+                    $linked_contact=get_user_meta($user->ID,'erp_contact_id',true);
                     $temp_data=$this->erpclient->getcustomers();
-                    echo('<option value="0">----Well Not Here----</option>');
+                    echo('<option value="0">----Here Over Here----</option>');
                     foreach($temp_data as $client)
                         {
-                            echo('<option value="'.$client['id'].'">'.$client['name'].'</option>');
+                            echo('<option value="'.$client['id'].'"'.($client['id']==$linked_contact?'selected':'').'>'.$client['name'].'</option>');
                         }
                 ?>
                 </select>
             </td>
         </tr>
     </table>
-<?php }
+    <?php 
+}
 
     function save_erp_connect($user)
     {
+        ldapi::file_loggerr("user_register hook called the save_erp_connect function");
         $role=$_POST['role'];
-        if($role != 'zpm_client')
+        if($role != 'zpm_client' && $role != 'subscriber')
         {
             return;
         }
         if(isset($_POST['ld_erp_linked_client']) && $_POST['ld_erp_linked_client']!=0)
         {
+            
             $link_id=sanitize_text_field($_POST['ld_erp_linked_client']);
             $fields=["id","name","logicaldoc_folder_ref", "logicaldoc_inv_folder_ref", "logicaldoc_quote_folder_ref", "logicaldoc_project_folder_ref"];
             $filter=array('id','=',$link_id);
@@ -91,7 +100,8 @@ function edit_connected_client($user)
     }
     public static function create_self()
     {
-        if (is_null(self::$instance)) {
+        if (is_null(self::$instance)) 
+        {
             self::$instance = new self;
         }
         return;
