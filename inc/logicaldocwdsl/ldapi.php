@@ -9,7 +9,6 @@ use Inc\usercontroller\datacontroller;
 
 class ldapi
 {
-    public static $logfile = NULL;
     private static $instance = null;
     private $session_var=null;
     private $ldoc_user=null;
@@ -116,14 +115,14 @@ class ldapi
     }
     public static function file_loggerr($log_data)
     {
-        self::$logfile=dirname(__FILE__, 3).'/'.'apilog.txt';
+        $logfile=dirname(__FILE__, 3).'/'.'apilog.txt';
 
-        if(!file_exists(self::$logfile))
+        if(!file_exists($logfile))
         {
-            $fp=fopen(self::$logfile, "w");
+            $fp=fopen($logfile, "w");
             fclose($fp);
         }
-        $fp = fopen(self::$logfile, 'a');
+        $fp = fopen($logfile, 'a');
         fwrite($fp, $log_data."\t".date("d-m-Y H:i:s")."\n");
         fclose($fp);
     }

@@ -17,7 +17,6 @@ class registersettings
         add_action( 'user_register', array($this,'save_erp_connect'),9);
         ldapi::file_loggerr("added save_erp_connect to user_register hook");
         add_action( 'edit_user_profile', array($this,'edit_connected_client'));    
-        // add_action( 'edit_user_profile_update', array($this,'save_erp_connect') );
     }
     function list_erp_customers( $user )
     { 

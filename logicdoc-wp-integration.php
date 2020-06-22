@@ -19,7 +19,7 @@ if(file_exists(plugin_dir_path(__FILE__).'vendor/autoload.php'))
 }
 use Inc\ldinit;
 if (class_exists('Inc\\ldinit')) {
-    add_action('wp_loaded', 'init_connector');
+    add_action('admin_init', 'init_connector');
 }
 function init_connector()
 {
