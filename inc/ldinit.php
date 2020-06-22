@@ -28,7 +28,7 @@ class ldinit
         add_action( 'user_register',array($this,'new_user_eventlistner'));
 
         // old user modify show linked contact only
-        add_action( 'edit_user_profile', array($this,'register_settings'),8);    
+        // add_action( 'edit_user_profile', array($this,'register_settings'),8);    
         // add_action( 'zpm_project_create',array($this,'project_create_eventlistner'));
         // add_action( 'zpm_project_update',array($this,'project_update_eventlistner'));
         // add_action( 'user_register',array($this,'new_user_eventlistner'));

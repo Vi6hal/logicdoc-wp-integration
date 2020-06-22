@@ -74,7 +74,7 @@ class ldapi
             ldapi::file_loggerr($e);
         }
     }
-    public function folder_access_controller($folder_id,$user_id,$acc_flag=0,$recursive=false)
+    public function folder_access_controller($folder_id,$user_id,$acc_flag=0,$recursive=0)
     {
         // acc_flag '0'= revoke '1' = grant
         try {
@@ -87,6 +87,7 @@ class ldapi
                 'recursive'=>$recursive,
             );
             $result = $this->folderClient->grantUser($params);
+            self::file_loggerr("user:$user_id attempted to grant access on $fodler_id with access flag as $acc_flag| recursively:$recursive");
             return $result??FALSE;
             }
         catch(exception $e)
