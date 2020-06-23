@@ -4,6 +4,9 @@
  *
  */
 namespace Inc\usercontroller;
+use Inc\logicaldocwdsl\ldapi;
+
+
 class foldercontroller
 {
     private static $ldoc=NULL;
@@ -107,9 +110,6 @@ class foldercontroller
         ldapi::file_loggerr("root folder for $logicaldoc_usr_id is $root_folder");
         return self::$ldoc->folder_access_controller($root_folder,$logicaldoc_usr_id,1,1)??false;
     }
-
-
-
     // generic wrappers
     private static function get_ldoc_userID()
     {

@@ -12,14 +12,18 @@ class registersettings
     private static $instance = NULL;
     private function __construct()
     {
-        $this->erpclient=clientcontroller::create_self();
+        ldapi::file_loggerr("adding trigger for new_user form to fetch customer list from erp");
         add_action( 'user_new_form', array($this,'list_erp_customers'),10);
+        ldapi::file_loggerr("trigger added for user_new_form for function list_erp_customers with priority 10");
         add_action( 'user_register', array($this,'save_erp_connect'),9);
-        ldapi::file_loggerr("added save_erp_connect to user_register hook");
         add_action( 'edit_user_profile', array($this,'edit_connected_client'));    
     }
     function list_erp_customers( $user )
     { 
+        ldapi::file_loggerr("creating new erp controller");
+        $this->erpclient=clientcontroller::create_self();
+        ldapi::file_loggerr("created new erp controller object");
+
         ldapi::file_loggerr("New User Form Loaded");
         ?>
         <table class="form-table">
@@ -43,6 +47,9 @@ class registersettings
 
 function edit_connected_client($user)
 { 
+    ldapi::file_loggerr("creating new erp controller");
+    $this->erpclient=clientcontroller::create_self();
+    ldapi::file_loggerr("created new erp controller object");
     if($user->roles[0]!='zpm_client' && $user->roles[0]!='subscriber')
     {
         return;
@@ -73,6 +80,10 @@ function edit_connected_client($user)
 
     function save_erp_connect($user)
     {
+        ldapi::file_loggerr("creating new erp controller");
+        $this->erpclient=clientcontroller::create_self();
+        ldapi::file_loggerr("created new erp controller object");
+
         ldapi::file_loggerr("user_register hook called the save_erp_connect function");
         $role=$_POST['role'];
         if($role != 'zpm_client' && $role != 'subscriber')
@@ -99,11 +110,14 @@ function edit_connected_client($user)
     }
     public static function create_self()
     {
+        ldapi::file_loggerr("checking for existing object");
         if (is_null(self::$instance)) 
         {
+            ldapi::file_loggerr("object not found calling constructor");
             self::$instance = new self;
         }
-        return;
+        ldapi::file_loggerr("returning new object");
+        return self::$instance;
     }
 
 }
