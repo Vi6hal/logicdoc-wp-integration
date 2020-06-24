@@ -1,1 +1,0 @@
-added save_erp_connect to user_register hook	19-06-2020 09:03:26
