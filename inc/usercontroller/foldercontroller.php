@@ -20,10 +20,6 @@ class foldercontroller
     private static $ldocclient_meta_quotf='logicaldoc_quote_folder_ref';
     private static $ldocclient_meta_prof='logicaldoc_project_folder_ref';
 
-
-
-
-
     public static function setup_permission($user,$ldoc_obj)
     {
         self::$ldoc=$ldoc_obj;
@@ -81,11 +77,31 @@ class foldercontroller
     }
     private static function zpm_frontend_user()
     {
+        $rootfolderkey='logicaldoc_folder_ref';
+        $rootfolderval=4;
+        $ld_usr=self::get_ldoc_userID();
 
     }
     private static function zpm_manager()
     {
-
+        $rootfolderval=4;
+        self::set_root_folder($rootfolderval);
+        $ld_usr=self::get_ldoc_userID();
+        $sub_folders=self::$ldoc->get_child_folder($rootfolderval);
+        self::$ldoc->folder_access_controller($rootfolderval,$ld_usr,1,0);
+        foreach($sub_folders as $sub_folder )
+        {
+          switch($sub_folder->name)
+          {
+            case 'Templates':
+                self::$ldoc->folder_access_controller($sub_folder->id,$ld_usr,1,1);
+                break;
+            case 'Client_Test':
+                self::$ldoc->folder_access_controller($sub_folder->id,$ld_usr,1,0);
+                break;
+          }
+        }
+        
     }
     private static function zpm_admin()
     {
@@ -118,6 +134,10 @@ class foldercontroller
     private static function get_root_folder()
     {
         return get_user_meta(self::$user->ID,self::$ldocuser_meta_rootf,true);    
+    }
+    private static function set_root_folder($rootf)
+    {
+        return update_user_meta(self::$user->ID,self::$ldocuser_meta_rootf,$rootf);    
     }
 
 }   

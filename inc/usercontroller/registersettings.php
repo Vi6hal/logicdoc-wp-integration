@@ -47,14 +47,13 @@ class registersettings
 
 function edit_connected_client($user)
 { 
-    ldapi::file_loggerr("creating new erp controller");
-    $this->erpclient=clientcontroller::create_self();
-    ldapi::file_loggerr("created new erp controller object");
     if($user->roles[0]!='zpm_client' && $user->roles[0]!='subscriber')
     {
         return;
     }
-    echo "CKSLD";
+    ldapi::file_loggerr("creating new erp controller");
+    $this->erpclient=clientcontroller::create_self();
+    ldapi::file_loggerr("created new erp controller object");
     ?>
     <table class="form-table">
         <tr>

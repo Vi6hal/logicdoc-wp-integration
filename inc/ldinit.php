@@ -44,10 +44,11 @@ class ldinit
     // }
     public function new_user_eventlistner($user_obj)
     {
-        $this->ldoc::file_loggerr($user_obj);
+        // $this->ldoc::file_loggerr($user_obj);
         $this->ldoc->ldc_new_user($user_obj);
         foldercontroller::setup_permission($user_obj,$this->ldoc);
         $this->ldoc->destroy_session();
+        return;
     }
     
     public function project_create_eventlistner($data)

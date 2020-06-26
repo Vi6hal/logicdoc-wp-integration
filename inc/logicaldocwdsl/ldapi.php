@@ -74,18 +74,20 @@ class ldapi
             ldapi::file_loggerr($e);
         }
     }
-    public function folder_access_controller($folder_id,$user_id,$acc_flag=0,$recursive=0)
+    public function folder_access_controller($folder_id,$user_id,$acc_flag=0,$recursive=FALSE)
     {
         // acc_flag '0'= revoke '1' = grant
+        // update no this above statement is wrong
+        // try the 20 digit 00000000000000000001 for read
         try {
-            $params = array
-            (
-                'sid' => $this->session_var,
-                'folderId'=>$folder_id,
-                'userId' => $user_id,
-                'permissions'=>$acc_flag,
-                'recursive'=>$recursive,
-            );
+                $params = array
+                (
+                    'sid' => $this->session_var,
+                    'folderId'=>$folder_id,
+                    'userId' => $user_id,
+                    'permissions'=>$acc_flag,
+                    'recursive'=>$recursive,
+                );
             $result = $this->folderClient->grantUser($params);
             self::file_loggerr("user:$user_id attempted to grant access on $fodler_id with access flag as $acc_flag| recursively:$recursive");
             return $result??FALSE;
@@ -142,5 +144,17 @@ class ldapi
             }
         }
     }
-
+    public function get_child_folder($parent_folder)
+    {
+        try {
+            $params = array(
+                    'sid' => $this->session_var,
+                    'folderId'=>$parent_folder,
+                );
+            $result = $this->folderClient->listChildren($params);
+            return $result->folder;
+        } catch (SoapFault $e) {
+            ldapi::file_loggerr($e);
+        }
+    }
 }
